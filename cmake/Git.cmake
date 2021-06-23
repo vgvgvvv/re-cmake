@@ -1,6 +1,6 @@
 message(STATUS "inlcude Git.cmake")
 
-macro(InitGit)
+macro(ReMake_InitGit)
   message(STATUS "----------")
   find_package(Git REQUIRED)
   message(STATUS "GIT_FOUND: ${GIT_FOUND}")
@@ -8,7 +8,7 @@ macro(InitGit)
   message(STATUS "GIT_VERSION_STRING: ${GIT_VERSION_STRING}")
 endmacro()
 
-function(UpdateSubModule)
+function(ReMake_UpdateSubModule)
   if(NOT GIT_FOUND)
     message(FATAL_ERROR "you should call InitGit() before calling UpdateSubModule()")
   endif()

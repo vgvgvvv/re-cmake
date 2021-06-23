@@ -8,7 +8,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Git.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
 
 
-macro(Ubpa_InitProject)
+macro(ReMake_InitProject)
 	set(CMAKE_DEBUG_POSTFIX "d")
 	set(CMAKE_RELEASE_POSTFIX "")
 	set(CMAKE_MINSIZEREL_POSTFIX "msr")
