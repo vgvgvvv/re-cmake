@@ -177,7 +177,92 @@ function(AddTarget)
         set(${ARG_RETURN_TARGET_NAME} ${coreTargetName} PARENT_SCOPE)
     endif()
 
+    # print
+    message(STATUS "- name: ${coreTargetName}")
+    message(STATUS "- folder : ${targetFolder}")
+    message(STATUS "- mode: ${ARG_MODE}")
+    Ubpa_List_Print(STRS ${sources_private}
+    TITLE  "- sources (private):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${sources_interface}
+    TITLE  "- sources interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${sources_public}
+    TITLE  "- sources public:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE}
+    TITLE  "- define (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE_PRIVATE}
+    TITLE  "- define interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE_INTERFACE}
+    TITLE  "- define private:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_LIB}
+    TITLE  "- lib (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_LIB_INTERFACE}
+    TITLE  "- lib interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_LIB_PRIVATE}
+    TITLE  "- lib private:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_INC}
+    TITLE  "- inc (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_INC_INTERFACE}
+    TITLE  "- inc interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_INC_PRIVATE}
+    TITLE  "- inc private:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE}
+    TITLE  "- define (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE_INTERFACE}
+    TITLE  "- define interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_DEFINE_PRIVATE}
+    TITLE  "- define private:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_C_OPTION}
+    TITLE  "- compile option (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_C_OPTION_INTERFACE}
+    TITLE  "- compile option interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_C_OPTION_PRIVATE}
+    TITLE  "- compile option private:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_L_OPTION}
+    TITLE  "- link option (public):"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_L_OPTION_INTERFACE}
+    TITLE  "- link option interface:"
+    PREFIX "  * ")
+    Ubpa_List_Print(STRS ${ARG_L_OPTION_PRIVATE}
+    TITLE  "- link option private:"
+    PREFIX "  * ")
 
+    set(targetNames "")
+
+    if("${ARG_MODE}" STREQUAL "EXE")
+        add_executable(${coreTargetName})
+        set_target_properties(${coreTargetName} CMAKE_DEBUG_TARGET_PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUF_POSTFIX)
+
+    elseif("${ARG_MODE}" STREQUAL "STATIC")
+    
+    elseif("${ARG_MODE}" STREQUAL "SHARED")
+    
+    elseif("${ARG_MODE}" STREQUAL "INTERFACE")
+    
+    elseif("${ARG_MODE}" STREQUAL "STATIC_AND_SHARED")
+    
+    else()
+        message(FATAL_ERROR "mode [${ARG_MODE}] is not supported")
+        return()
+    endif()
 
     message(STATUS "----------")
 endfunction()
