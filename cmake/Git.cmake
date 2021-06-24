@@ -1,4 +1,5 @@
-message(STATUS "inlcude Git.cmake")
+
+ReMake_ShowIncludeFileName()
 
 macro(ReMake_InitGit)
   message(STATUS "----------")

@@ -32,3 +32,8 @@ function(ReMake_Path_Back rst path times)
   endforeach()
   set(${rst} ${curPath} PARENT_SCOPE)
 endfunction()
+
+function(ReMake_ShowIncludeFileName)
+    get_filename_component(file_name ${CMAKE_CURRENT_LIST_FILE} NAME)
+    message(STATUS "include ${file_name}")
+endfunction()

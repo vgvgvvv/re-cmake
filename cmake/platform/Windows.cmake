@@ -1,3 +1,2 @@
 
-message(STATUS "include Windows.cmake")
-
+ReMake_ShowIncludeFileName()

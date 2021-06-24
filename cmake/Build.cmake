@@ -1,5 +1,5 @@
 
-message(STATUS "include Build.cmake")
+ReMake_ShowIncludeFileName()
 
 # 添加子文件夹文件
 function(ReMake_AddSubDirsRec path)

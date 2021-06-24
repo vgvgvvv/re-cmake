@@ -1,1 +1,1 @@
-message(STATUS "inlcude init.cmake")
+ReMake_ShowIncludeFileName()
