@@ -1,6 +1,15 @@
 
 ReMake_ShowIncludeFileName()
 
+# 是否为根工程
+function(IsRootProject Result)
+    if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+        set(${Result} TRUE)
+    else()
+        set(${Result} FALSE)
+    endif()
+endfunction()
+
 # 添加子文件夹文件
 function(ReMake_AddSubDirsRec path)
   file(GLOB_RECURSE children LIST_DIRECTORIES true ${CMAKE_CURRENT_SOURCE_DIR}/${path}/*)
