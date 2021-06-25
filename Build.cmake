@@ -4,27 +4,38 @@ ReMake_ShowIncludeFileName()
 # 是否为根工程
 function(IsRootProject Result)
     if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-        set(${Result} TRUE)
+        set(${Result} TRUE PARENT_SCOPE)
     else()
-        set(${Result} FALSE)
+        set(${Result} FALSE PARENT_SCOPE)
     endif()
 endfunction()
 
 # 添加子文件夹文件
 function(ReMake_AddSubDirsRec path)
-  file(GLOB_RECURSE children LIST_DIRECTORIES true ${CMAKE_CURRENT_SOURCE_DIR}/${path}/*)
-  set(dirs "")
-  list(APPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${path}")
-  foreach(item ${children})
+
+    set(IsRoot "")
+    IsRootProject(IsRoot)
+
+    if(${IsRoot})
+	    message(STATUS "IsRoot Project Add Sub Directories")
+    else()
+	    message(STATUS "Not Root Project Skip Add Sub Directories")
+        return()
+    endif()
+
+    file(GLOB_RECURSE children LIST_DIRECTORIES true ${CMAKE_CURRENT_SOURCE_DIR}/${path}/*)
+    set(dirs "")
+    list(APPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${path}")
+    foreach(item ${children})
     if(IS_DIRECTORY ${item} AND EXISTS "${item}/CMakeLists.txt")
         # 加入子文件夹的同时 添加include文件夹
         include_directories(${item})
         list(APPEND dirs ${item})
     endif()
-  endforeach()
-  foreach(dir ${dirs})
+    endforeach()
+    foreach(dir ${dirs})
     add_subdirectory(${dir})
-  endforeach()
+    endforeach()
 endfunction()
 
 # 获取目标名
