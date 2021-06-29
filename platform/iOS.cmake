@@ -1,4 +1,4 @@
 
 ReMake_ShowIncludeFileName()
 
-add_definitions(PLATFORM_IOS)
+add_definitions(-DPLATFORM_IOS  -DAPPLE)

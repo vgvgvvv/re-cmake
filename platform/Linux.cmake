@@ -1,4 +1,4 @@
 
 ReMake_ShowIncludeFileName()
 
-add_definitions(PLATFORM_LINUX)
+add_definitions(-DPLATFORM_LINUX)

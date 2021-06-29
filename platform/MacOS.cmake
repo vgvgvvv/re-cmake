@@ -1,4 +1,4 @@
 
 ReMake_ShowIncludeFileName()
 
-add_definitions(PLATFORM_MACOS)
+add_definitions(-DPLATFORM_MACOS -DAPPLE)
