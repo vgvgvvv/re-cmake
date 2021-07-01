@@ -292,7 +292,7 @@ function(ReMake_AddTarget)
              BASE_NAME ${coreTargetName}
              EXPORT_MACRO_NAME ${coreTargetName}_API
              EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/${coreTargetName}_API.h
-             STATIC_DEFINE ${coreTargetName}_BUILT_AS_STATIC
+             STATIC_DEFINE ${coreTargetName}_BUILT_AS_STATIC)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
         add_library(${coreTargetName} INTERFACE)
     else()
