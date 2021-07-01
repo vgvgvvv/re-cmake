@@ -297,8 +297,8 @@ function(ReMake_AddTarget)
              EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/${coreTargetName}_API.h
              STATIC_DEFINE ${coreTargetName}_BUILT_AS_STATIC)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
-        add_library(${coreTargetName} INTERFACE
-        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_INTERFACE_LIB))
+        add_library(${coreTargetName} INTERFACE)
+        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_INTERFACE_LIB)
     else()
         message(FATAL_ERROR "mode [${ARG_MODE}] is not supported")
         return()
