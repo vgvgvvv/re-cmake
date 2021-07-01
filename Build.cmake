@@ -300,6 +300,8 @@ function(ReMake_AddTarget)
         return()
     endif()
 
+    set_target_properties(${coreTargetName} PROPERTIES BUILD_MODE ${ARG_MODE})
+
     set(targetName ${coreTargetName})
 
     if(NOT "${ARG_CXX_STANDARD}" STREQUAL "")
