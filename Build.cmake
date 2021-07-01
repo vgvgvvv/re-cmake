@@ -284,17 +284,21 @@ function(ReMake_AddTarget)
         set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
         set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
         set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
+        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_EXE)
     elseif("${ARG_MODE}" STREQUAL "STATIC")
         add_library(${coreTargetName} STATIC)
+        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_STATIC_LIB)
     elseif("${ARG_MODE}" STREQUAL "SHARED")
         add_library(${coreTargetName} SHARED)
+        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_SHARED_LIB)
         GENERATE_EXPORT_HEADER( ${coreTargetName}
              BASE_NAME ${coreTargetName}
              EXPORT_MACRO_NAME ${coreTargetName}_API
              EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/${coreTargetName}_API.h
              STATIC_DEFINE ${coreTargetName}_BUILT_AS_STATIC)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
-        add_library(${coreTargetName} INTERFACE)
+        add_library(${coreTargetName} INTERFACE
+        target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_INTERFACE_LIB))
     else()
         message(FATAL_ERROR "mode [${ARG_MODE}] is not supported")
         return()
