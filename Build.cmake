@@ -284,18 +284,15 @@ function(ReMake_AddTarget)
         set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
         set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
         set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
-
+    elseif("${ARG_MODE}" STREQUAL "STATIC")
+        add_library(${coreTargetName} STATIC)
+    elseif("${ARG_MODE}" STREQUAL "SHARED")
+        add_library(${coreTargetName} SHARED)
         GENERATE_EXPORT_HEADER( ${coreTargetName}
              BASE_NAME ${coreTargetName}
              EXPORT_MACRO_NAME ${coreTargetName}_API
              EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/${coreTargetName}_API.h
              STATIC_DEFINE ${coreTargetName}_BUILT_AS_STATIC
-)
-
-    elseif("${ARG_MODE}" STREQUAL "STATIC")
-        add_library(${coreTargetName} STATIC)
-    elseif("${ARG_MODE}" STREQUAL "SHARED")
-        add_library(${coreTargetName} SHARED)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
         add_library(${coreTargetName} INTERFACE)
     else()
