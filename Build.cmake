@@ -35,8 +35,59 @@ function(ReMake_AddSubDirsRec path)
     endforeach()
     foreach(dir ${dirs})
     add_subdirectory(${dir})
+    # message(STATUS "lastTarget ${lastTarget}")
+    if(NOT ${lastTarget} STREQUAL "")
+        # message(STATUS "${lastTarget}_LIB ${${lastTarget}_LIB}")
+        set(${lastTarget}_LIB ${${lastTarget}_LIB} PARENT_SCOPE)
+        # message(STATUS "${lastTarget}_LIB_INTERFACE ${${lastTarget}_LIB_INTERFACE}")
+        set(${lastTarget}_LIB_INTERFACE ${${lastTarget}_LIB_INTERFACE} PARENT_SCOPE)
+        # message(STATUS "${lastTarget}_LIB_PRIVATE ${${lastTarget}_LIB_PRIVATE}")
+        set(${lastTarget}_LIB_PRIVATE ${${lastTarget}_LIB_PRIVATE} PARENT_SCOPE)
+    endif()
+    set(lastTarget "")
     endforeach()
+
+    # 获取缓存的Target
+    set(OutCachedTargets ${Targets} PARENT_SCOPE)
+    
+
 endfunction()
+
+# 暂时缓存对象，之后用于链接
+macro(ReMake_CacheTarget)
+    set(${targetName}_LIB ${${targetName}_LIB} PARENT_SCOPE)
+    set(${targetName}_LIB_INTERFACE ${${targetName}_LIB_INTERFACE} PARENT_SCOPE)
+    set(${targetName}_LIB_PRIVATE ${${targetName}_LIB_PRIVATE} PARENT_SCOPE)
+
+    set(Added_Targets ${Targets})
+    list(APPEND Added_Targets ${targetName})
+    set(Targets "${Added_Targets}" PARENT_SCOPE)
+    set(lastTarget ${targetName} PARENT_SCOPE)
+endmacro()
+
+# 对缓存的目标进行链接
+macro(ReMake_LinkCachedTarget)
+
+    message(STATUS "CachedTargets ${OutCachedTargets}")
+    foreach(cachedTarget ${OutCachedTargets})
+    if(NOT "${${cachedTarget}_LIB}" STREQUAL "")
+        message(STATUS "${cachedTarget} public link ${${cachedTarget}_LIB}")
+    endif()
+    if(NOT "${${cachedTarget}_LIB_INTERFACE}" STREQUAL "")
+        message(STATUS "${cachedTarget} interface link ${${cachedTarget}_LIB_INTERFACE}")
+    endif()
+    if(NOT "${${cachedTarget}_LIB_PRIVATE}" STREQUAL "")
+        message(STATUS "${cachedTarget} private link ${${cachedTarget}_LIB_PRIVATE}")
+    endif()
+    target_link_libraries(${cachedTarget}
+      PUBLIC ${${cachedTarget}_LIB}
+      INTERFACE ${${cachedTarget}_LIB_INTERFACE}
+      PRIVATE ${${cachedTarget}_LIB_PRIVATE}
+    )
+    endforeach()
+
+endmacro()
+
 
 # 获取目标名
 function(ReMake_GetTargetName rst targetPath)
@@ -357,6 +408,10 @@ function(ReMake_AddTarget)
       INTERFACE ${ARG_LIB_INTERFACE}
       PRIVATE ${ARG_LIB_PRIVATE}
     )
+
+    set(${targetName}_LIB ${ARG_LIB} PARENT_SCOPE)
+    set(${targetName}_LIB_INTERFACE ${ARG_LIB_INTERFACE} PARENT_SCOPE)
+    set(${targetName}_LIB_PRIVATE ${ARG_LIB_PRIVATE} PARENT_SCOPE)
 
     # target compile option
     target_compile_options(${targetName}
