@@ -206,6 +206,7 @@ function(ReMake_AddTarget)
         set(${ARG_RETURN_TARGET_NAME} ${coreTargetName} PARENT_SCOPE)
     endif()
 
+    
 
     # print
     message(STATUS "- name: ${coreTargetName}")
@@ -378,6 +379,41 @@ function(ReMake_AddTarget)
       INTERFACE ${ARG_PCH_INTERFACE}
       PRIVATE ${ARG_PCH}
     )
+
+    message(STATUS "----------")
+
+    message(STATUS "generate module info...")
+
+    string(APPEND TargetArgs "{\n")
+    string(APPEND TargetArgs "  \"targetName\" : \"${targetName}\",\n" )
+    string(APPEND TargetArgs "  \"mode\" : \"${ARG_MODE}\",\n" )
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_include\" : \"${ARG_INC}\",\n")
+    string(APPEND TargetArgs "  \"interface_include\" : \"${ARG_INC_INTERFACE}\",\n")
+    string(APPEND TargetArgs "  \"private_include\" : \"${ARG_INC_PRIVATE}\",\n")
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_source\" : \"${sources_public}\",\n")
+    string(APPEND TargetArgs "  \"interface_source\" : \"${sources_interface}\",\n")
+    string(APPEND TargetArgs "  \"private_source\" : \"${sources_private}\",\n")
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_compile_options\" : \"${ARG_C_OPTION}\",\n")
+    string(APPEND TargetArgs "  \"interface_compile_options\" : \"${ARG_C_OPTION_INTERFACE}\",\n")
+    string(APPEND TargetArgs "  \"private_compile_options\" : \"${ARG_C_OPTION_PRIVATE}\",\n")
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_link_options\" : \"${ARG_L_OPTION}\",\n")
+    string(APPEND TargetArgs "  \"interface_link_options\" : \"${ARG_L_OPTION_INTERFACE}\",\n")
+    string(APPEND TargetArgs "  \"private_link_options\" : \"${ARG_L_OPTION_PRIVATE}\",\n")
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_pch\" : \"${ARG_PCH_PUBLIC}\",\n")
+    string(APPEND TargetArgs "  \"interface_pch\" : \"${ARG_PCH_INTERFACE}\",\n")
+    string(APPEND TargetArgs "  \"private_pch\" : \"${ARG_PCH}\",\n")
+    string(APPEND TargetArgs "  \n" )
+    string(APPEND TargetArgs "  \"public_lib\" : \"${ARG_LIB}\",\n" )
+    string(APPEND TargetArgs "  \"interface_lib\" : \"${ARG_LIB_INTERFACE}\",\n" )
+    string(APPEND TargetArgs "  \"private_lib\" : \"${ARG_LIB_PRIVATE}\"\n" )
+    string(APPEND TargetArgs "}\n")
+
+    write_file(${CMAKE_CURRENT_SOURCE_DIR}/module_info.json ${TargetArgs})
 
     message(STATUS "----------")
 endfunction()
