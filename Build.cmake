@@ -443,7 +443,16 @@ function(ReMake_AddTarget)
     Json_ListToJsonString(ARG_LIB_INTERFACE TempList)
     string(APPEND TargetArgs "  \"interface_lib\" : ${TempList},\n" )
     Json_ListToJsonString(ARG_LIB_PRIVATE TempList)
-    string(APPEND TargetArgs "  \"private_lib\" : ${TempList}\n" )
+    string(APPEND TargetArgs "  \"private_lib\" : ${TempList},\n" )
+        
+    string(APPEND TargetArgs "  \n" )
+
+    Json_ListToJsonString(ARG_DEFINE TempList)
+    string(APPEND TargetArgs "  \"public_define\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_DEFINE_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_define\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_DEFINE_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_define\" : ${TempList}\n" )
     string(APPEND TargetArgs "}\n")
 
     write_file(${CMAKE_CURRENT_SOURCE_DIR}/${targetName}.Target.json ${TargetArgs})
