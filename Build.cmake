@@ -84,6 +84,9 @@ endfunction()
 # TEST
 # 
 # [value]
+# 目标名
+# TARGET_NAME：
+# 模式
 # MODE: EXE / STATIC / SHARED / INTERFACE / STATIC_AND_SHARED
 # 将当前目录源文件加入到
 # ADD_CURRENT_TO: PUBLIC / INTERFACE / PRIVATE (default) / NONE
@@ -431,7 +434,7 @@ function(ReMake_AddTarget)
     string(APPEND TargetArgs "  \"private_lib\" : \"${TempList}\"\n" )
     string(APPEND TargetArgs "}\n")
 
-    write_file(${CMAKE_CURRENT_SOURCE_DIR}/module_info.json ${TargetArgs})
+    write_file(${CMAKE_CURRENT_SOURCE_DIR}/${targetName}.Target.json ${TargetArgs})
 
     message(STATUS "----------")
 endfunction()
