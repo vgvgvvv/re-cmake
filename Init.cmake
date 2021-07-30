@@ -8,9 +8,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/Basic.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Tools.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Git.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
-
+include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
-
 
 
 macro(ReMake_InitProject)
