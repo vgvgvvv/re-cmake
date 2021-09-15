@@ -1,7 +1,7 @@
 
 ReMake_ShowIncludeFileName()
 
-# ÊÇ·ñÎª¸ù¹¤³Ì
+# æ˜¯å¦ä¸ºæ ¹å·¥ç¨‹
 function(IsRootProject Result)
     if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
         set(${Result} TRUE PARENT_SCOPE)
@@ -10,7 +10,7 @@ function(IsRootProject Result)
     endif()
 endfunction()
 
-# Ìí¼Ó×ÓÎÄ¼þ¼ÐÎÄ¼þ
+# æ·»åŠ å­æ–‡ä»¶å¤¹æ–‡ä»¶
 function(ReMake_AddSubDirsRec path)
 
     set(IsRoot "")
@@ -33,7 +33,7 @@ function(ReMake_AddSubDirsRec path)
             if(${isVendor} GREATER -1)
                 message(STATUS "ignore vendor ${item}")
             else()
-                # ¼ÓÈë×ÓÎÄ¼þ¼ÐµÄÍ¬Ê± Ìí¼ÓincludeÎÄ¼þ¼Ð
+                # åŠ å…¥å­æ–‡ä»¶å¤¹çš„åŒæ—¶ æ·»åŠ includeæ–‡ä»¶å¤¹
                 include_directories(${item})
                 list(APPEND dirs ${item})
             endif()
@@ -44,14 +44,14 @@ function(ReMake_AddSubDirsRec path)
     endforeach()
 endfunction()
 
-# »ñÈ¡Ä¿±êÃû
+# èŽ·å–ç›®æ ‡å
 function(ReMake_GetTargetName rst targetPath)
   file(RELATIVE_PATH targetRelPath "${PROJECT_SOURCE_DIR}/src" "${targetPath}")
   string(REPLACE "/" "_" targetName "${PROJECT_NAME}_${targetRelPath}")
   set(${rst} ${targetName} PARENT_SCOPE)
 endfunction()
 
-# »ñÈ¡Ô´ÎÄ¼þ
+# èŽ·å–æºæ–‡ä»¶
 function(ReMake_ExpandSources rst sources)
 
     set(tmp_rst "")
@@ -90,11 +90,11 @@ endfunction()
 # TEST
 # 
 # [value]
-# Ä¿±êÃû
-# TARGET_NAME£º
-# Ä£Ê½
+# ç›®æ ‡å
+# TARGET_NAMEï¼š
+# æ¨¡å¼
 # MODE: EXE / STATIC / SHARED / INTERFACE / STATIC_AND_SHARED
-# ½«µ±Ç°Ä¿Â¼Ô´ÎÄ¼þ¼ÓÈëµ½
+# å°†å½“å‰ç›®å½•æºæ–‡ä»¶åŠ å…¥åˆ°
 # ADD_CURRENT_TO: PUBLIC / INTERFACE / PRIVATE (default) / NONE
 # RET_TARGET_NAME
 # CXX_STANDARD: 11/14/17/20, default is global CXX_STANDARD (20)
@@ -156,7 +156,7 @@ function(ReMake_AddTarget)
         set(ARG_ADD_CURRENT_TO "PRIVATE")
     endif()
 
-    # µ±ÎªInterfaceÊ±ÐèÒª½«privateÓëpublic¼ÓÈëµ½interfaceÀïÃæ
+    # å½“ä¸ºInterfaceæ—¶éœ€è¦å°†privateä¸ŽpublicåŠ å…¥åˆ°interfaceé‡Œé¢
     # public, private -> interface
     if("${ARG_MODE}" STREQUAL "INTERFACE")
         list(APPEND ARG_SOURCE_INTERFACE   ${ARG_SOURCE_PUBLIC} ${ARG_SOURCE}          )
@@ -294,9 +294,9 @@ function(ReMake_AddTarget)
         if(MSVC)
 			set_target_properties(${ARG_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 		endif()
-        set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-        set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
-        set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
         target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_EXE)
     elseif("${ARG_MODE}" STREQUAL "STATIC")
         add_library(${coreTargetName} STATIC)
