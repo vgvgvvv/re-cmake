@@ -1,5 +1,8 @@
 
 ReMake_ShowIncludeFileName()
 
-add_definitions(-DPLATFORM_MACOS -DAPPLE)
-set(IS_MACOS 1)
+if(IS_MACOS EQUAL 1)
+
+    add_definitions(-DPLATFORM_MACOS -DAPPLE)
+
+endif()

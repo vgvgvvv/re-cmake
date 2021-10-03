@@ -1,5 +1,8 @@
 
 ReMake_ShowIncludeFileName()
 
-add_definitions(-DPLATFORM_ANDROID)
-set(IS_ANDROID 1)
+if (IS_ANDROID EQUAL 1)
+
+    add_definitions(-DPLATFORM_ANDROID)
+
+endif ()
