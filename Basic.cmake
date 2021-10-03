@@ -1,7 +1,7 @@
 
 message(STATUS "include Basic.cmake")
 
-# Êä³öÁĞ±í
+# è¾“å‡ºåˆ—è¡¨
 function(ReMake_List_Print)
   cmake_parse_arguments("ARG" "" "TITLE;PREFIX" "STRS" ${ARGN})
   list(LENGTH ARG_STRS strsLength)
@@ -16,13 +16,13 @@ function(ReMake_List_Print)
   endforeach()
 endfunction()
 
-# »ñÈ¡Ä¿Â¼Ãû
+# è·å–ç›®å½•å
 function(ReMake_GetDirName dirName)
   string(REGEX MATCH "([^/]*)$" TMP ${CMAKE_CURRENT_SOURCE_DIR})
   set(${dirName} ${TMP} PARENT_SCOPE)
 endfunction()
 
-# Íù»ØÊıÄ¿Â¼Ãû
+# å¾€å›æ•°ç›®å½•å
 function(ReMake_Path_Back rst path times)
   math(EXPR stop "${times}-1")
   set(curPath ${path})

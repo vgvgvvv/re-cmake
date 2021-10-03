@@ -1,7 +1,7 @@
 
 ReMake_ShowIncludeFileName()
 
-# ÊÇ·ñÎª¸ù¹¤³Ì
+# æ˜¯å¦ä¸ºæ ¹å·¥ç¨‹
 function(IsRootProject Result)
     if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
         set(${Result} TRUE PARENT_SCOPE)
@@ -10,7 +10,7 @@ function(IsRootProject Result)
     endif()
 endfunction()
 
-# Ìí¼Ó×ÓÎÄ¼þ¼ÐÎÄ¼þ
+# æ·»åŠ å­æ–‡ä»¶å¤¹æ–‡ä»¶
 function(ReMake_AddSubDirsRec path)
 
     set(IsRoot "")
@@ -27,25 +27,31 @@ function(ReMake_AddSubDirsRec path)
     set(dirs "")
     list(APPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${path}")
     foreach(item ${children})
-    if(IS_DIRECTORY ${item} AND EXISTS "${item}/CMakeLists.txt")
-        # ¼ÓÈë×ÓÎÄ¼þ¼ÐµÄÍ¬Ê± Ìí¼ÓincludeÎÄ¼þ¼Ð
-        include_directories(${item})
-        list(APPEND dirs ${item})
-    endif()
+        if(IS_DIRECTORY ${item} AND EXISTS "${item}/CMakeLists.txt")
+            set(isVendor -1)
+            string(FIND ${item} "vendor" isVendor)
+            if(${isVendor} GREATER -1)
+                message(STATUS "ignore vendor ${item}")
+            else()
+                # åŠ å…¥å­æ–‡ä»¶å¤¹çš„åŒæ—¶ æ·»åŠ includeæ–‡ä»¶å¤¹
+                include_directories(${item})
+                list(APPEND dirs ${item})
+            endif()
+        endif()
     endforeach()
     foreach(dir ${dirs})
     add_subdirectory(${dir})
     endforeach()
 endfunction()
 
-# »ñÈ¡Ä¿±êÃû
+# èŽ·å–ç›®æ ‡å
 function(ReMake_GetTargetName rst targetPath)
   file(RELATIVE_PATH targetRelPath "${PROJECT_SOURCE_DIR}/src" "${targetPath}")
   string(REPLACE "/" "_" targetName "${PROJECT_NAME}_${targetRelPath}")
   set(${rst} ${targetName} PARENT_SCOPE)
 endfunction()
 
-# »ñÈ¡Ô´ÎÄ¼þ
+# èŽ·å–æºæ–‡ä»¶
 function(ReMake_ExpandSources rst sources)
 
     set(tmp_rst "")
@@ -53,7 +59,7 @@ function(ReMake_ExpandSources rst sources)
         if(IS_DIRECTORY ${item})
             file(GLOB_RECURSE itemSrcs
                 # cmake
-                ${item}/*cmake
+                ${item}/*.cmake
 
                 # INTERFACEer files
                 ${item}/*.h
@@ -69,6 +75,15 @@ function(ReMake_ExpandSources rst sources)
                 ${item}/*.cxx
             )
             list(APPEND tmp_rst ${itemSrcs})
+            if(USE_OBJECTIVE_C EQUAL 1)
+                file(GLOB_RECURSE OCItemSrcs
+                        # cmake
+                        ${item}/*.m
+                        ${item}/*.mm
+                        ${item}/*.xib
+                        )
+                list(APPEND tmp_rst ${OCItemSrcs})
+            endif()
         else()
             if(NOT IS_ABSOLUTE "${item}")
                 get_filename_component(item "${item}" ABSOLUTE)
@@ -84,11 +99,11 @@ endfunction()
 # TEST
 # 
 # [value]
-# Ä¿±êÃû
-# TARGET_NAME£º
-# Ä£Ê½
+# ç›®æ ‡å
+# TARGET_NAMEï¼š
+# æ¨¡å¼
 # MODE: EXE / STATIC / SHARED / INTERFACE / STATIC_AND_SHARED
-# ½«µ±Ç°Ä¿Â¼Ô´ÎÄ¼þ¼ÓÈëµ½
+# å°†å½“å‰ç›®å½•æºæ–‡ä»¶åŠ å…¥åˆ°
 # ADD_CURRENT_TO: PUBLIC / INTERFACE / PRIVATE (default) / NONE
 # RET_TARGET_NAME
 # CXX_STANDARD: 11/14/17/20, default is global CXX_STANDARD (20)
@@ -135,9 +150,12 @@ function(ReMake_AddTarget)
         L_OPTION_PRIVATE 
         PCH)
 
+     list(APPEND arglist 
+        ADD_OPTIONS)
+
     cmake_parse_arguments(
         "ARG"
-        "TEST"
+        "TEST;USE_OBJECTIVE_C"
         "TARGET_NAME;MODE;ADD_CURRENT_TO;CXX_STANDARD"
         "${arglist}"
         ${ARGN}
@@ -147,7 +165,12 @@ function(ReMake_AddTarget)
         set(ARG_ADD_CURRENT_TO "PRIVATE")
     endif()
 
-    # µ±ÎªInterfaceÊ±ÐèÒª½«privateÓëpublic¼ÓÈëµ½interfaceÀïÃæ
+    if(ARG_USE_OBJECTIVE_C)
+        set(USE_OBJECTIVE_C 1)
+    endif()
+
+
+    # å½“ä¸ºInterfaceæ—¶éœ€è¦å°†privateä¸ŽpublicåŠ å…¥åˆ°interfaceé‡Œé¢
     # public, private -> interface
     if("${ARG_MODE}" STREQUAL "INTERFACE")
         list(APPEND ARG_SOURCE_INTERFACE   ${ARG_SOURCE_PUBLIC} ${ARG_SOURCE}          )
@@ -285,9 +308,9 @@ function(ReMake_AddTarget)
         if(MSVC)
 			set_target_properties(${ARG_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 		endif()
-        set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-        set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
-        set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES MINSIZEREL_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
+        # set_target_properties(${coreTargetName} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
         target_compile_definitions(${coreTargetName} PRIVATE COMPILE_AS_EXE)
     elseif("${ARG_MODE}" STREQUAL "STATIC")
         add_library(${coreTargetName} STATIC)
@@ -307,6 +330,9 @@ function(ReMake_AddTarget)
         return()
     endif()
 
+    if(ARG_USE_OBJECTIVE_C)
+        ReMake_SetupObjectiveC(${coreTargetName})
+    endif()
 
     set(targetName ${coreTargetName})
 
@@ -390,48 +416,74 @@ function(ReMake_AddTarget)
     string(APPEND TargetArgs "{\n")
     string(APPEND TargetArgs "  \"targetName\" : \"${targetName}\",\n" )
     string(APPEND TargetArgs "  \"mode\" : \"${ARG_MODE}\",\n" )
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${ARG_INC})
-    string(APPEND TargetArgs "  \"public_include\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_INC_INTERFACE})
-    string(APPEND TargetArgs "  \"interface_include\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_INC_PRIVATE})
-    string(APPEND TargetArgs "  \"private_include\" : \"${TempList}\",\n")
+
+    Json_ListToJsonString(ARG_INC TempList)
+    string(APPEND TargetArgs "  \"public_include\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_INC_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_include\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_INC_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_include\" : ${TempList},\n")
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${sources_public})
-    string(APPEND TargetArgs "  \"public_source\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${sources_interface})
-    string(APPEND TargetArgs "  \"interface_source\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${sources_private})
-    string(APPEND TargetArgs "  \"private_source\" : \"${TempList}\",\n")
+
+    Json_ListToJsonString(sources_public TempList)
+    string(APPEND TargetArgs "  \"public_source\" : ${TempList},\n")
+    Json_ListToJsonString(sources_interface TempList)
+    string(APPEND TargetArgs "  \"interface_source\" : ${TempList},\n")
+    Json_ListToJsonString(sources_private TempList)
+    string(APPEND TargetArgs "  \"private_source\" : ${TempList},\n")
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${ARG_C_OPTION})
-    string(APPEND TargetArgs "  \"public_compile_options\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_C_OPTION_INTERFACE})
-    string(APPEND TargetArgs "  \"interface_compile_options\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_C_OPTION_PRIVATE})
-    string(APPEND TargetArgs "  \"private_compile_options\" : \"${TempList}\",\n")
+
+    Json_ListToJsonString(ARG_C_OPTION TempList)
+    string(APPEND TargetArgs "  \"public_compile_options\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_C_OPTION_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_compile_options\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_C_OPTION_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_compile_options\" : ${TempList},\n")
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${ARG_L_OPTION})
-    string(APPEND TargetArgs "  \"public_link_options\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_L_OPTION_INTERFACE})
-    string(APPEND TargetArgs "  \"interface_link_options\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_L_OPTION_PRIVATE})
-    string(APPEND TargetArgs "  \"private_link_options\" : \"${TempList}\",\n")
+
+    Json_ListToJsonString(ARG_L_OPTION TempList)
+    string(APPEND TargetArgs "  \"public_link_options\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_L_OPTION_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_link_options\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_L_OPTION_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_link_options\" : ${TempList},\n")
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${ARG_PCH_PUBLIC})
-    string(APPEND TargetArgs "  \"public_pch\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_PCH_INTERFACE})
-    string(APPEND TargetArgs "  \"interface_pch\" : \"${TempList}\",\n")
-    string(JOIN "," TempList ${ARG_PCH})
-    string(APPEND TargetArgs "  \"private_pch\" : \"${TempList}\",\n")
+
+    Json_ListToJsonString(ARG_PCH_PUBLIC TempList)
+    string(APPEND TargetArgs "  \"public_pch\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_PCH_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_pch\" : ${TempList},\n")
+    Json_ListToJsonString(ARG_PCH TempList)
+    string(APPEND TargetArgs "  \"private_pch\" : ${TempList},\n")
+
     string(APPEND TargetArgs "  \n" )
-    string(JOIN "," TempList ${ARG_LIB})
-    string(APPEND TargetArgs "  \"public_lib\" : \"${TempList}\",\n" )
-    string(JOIN "," TempList ${ARG_LIB_INTERFACE})
-    string(APPEND TargetArgs "  \"interface_lib\" : \"${TempList}\",\n" )
-    string(JOIN "," TempList ${ARG_LIB_PRIVATE})
-    string(APPEND TargetArgs "  \"private_lib\" : \"${TempList}\"\n" )
+
+    Json_ListToJsonString(ARG_LIB TempList)
+    string(APPEND TargetArgs "  \"public_lib\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_LIB_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_lib\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_LIB_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_lib\" : ${TempList},\n" )
+        
+    string(APPEND TargetArgs "  \n" )
+
+    Json_ListToJsonString(ARG_DEFINE TempList)
+    string(APPEND TargetArgs "  \"public_define\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_DEFINE_INTERFACE TempList)
+    string(APPEND TargetArgs "  \"interface_define\" : ${TempList},\n" )
+    Json_ListToJsonString(ARG_DEFINE_PRIVATE TempList)
+    string(APPEND TargetArgs "  \"private_define\" : ${TempList},\n" )
+    string(APPEND TargetArgs "  \n" )
+
+    Json_ListToJsonString(ARG_ADD_OPTIONS TempList)
+    string(APPEND TargetArgs "  \"add_options\" : ${TempList}\n" )
+
     string(APPEND TargetArgs "}\n")
 
     write_file(${CMAKE_CURRENT_SOURCE_DIR}/${targetName}.Target.json ${TargetArgs})
