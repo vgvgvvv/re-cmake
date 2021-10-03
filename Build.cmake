@@ -59,7 +59,7 @@ function(ReMake_ExpandSources rst sources)
         if(IS_DIRECTORY ${item})
             file(GLOB_RECURSE itemSrcs
                 # cmake
-                ${item}/*cmake
+                ${item}/*.cmake
 
                 # INTERFACEer files
                 ${item}/*.h
@@ -75,6 +75,15 @@ function(ReMake_ExpandSources rst sources)
                 ${item}/*.cxx
             )
             list(APPEND tmp_rst ${itemSrcs})
+            if(USE_OBJECTIVE_C EQUAL 1)
+                file(GLOB_RECURSE OCItemSrcs
+                        # cmake
+                        ${item}/*.m
+                        ${item}/*.mm
+                        ${item}/*.xib
+                        )
+                list(APPEND tmp_rst ${OCItemSrcs})
+            endif()
         else()
             if(NOT IS_ABSOLUTE "${item}")
                 get_filename_component(item "${item}" ABSOLUTE)
@@ -146,7 +155,7 @@ function(ReMake_AddTarget)
 
     cmake_parse_arguments(
         "ARG"
-        "TEST"
+        "TEST;USE_OBJECTIVE_C"
         "TARGET_NAME;MODE;ADD_CURRENT_TO;CXX_STANDARD"
         "${arglist}"
         ${ARGN}
@@ -155,6 +164,11 @@ function(ReMake_AddTarget)
     if("${ARG_ADD_CURRENT_TO}" STREQUAL "")
         set(ARG_ADD_CURRENT_TO "PRIVATE")
     endif()
+
+    if(ARG_USE_OBJECTIVE_C)
+        set(USE_OBJECTIVE_C 1)
+    endif()
+
 
     # 当为Interface时需要将private与public加入到interface里面
     # public, private -> interface
@@ -316,6 +330,9 @@ function(ReMake_AddTarget)
         return()
     endif()
 
+    if(ARG_USE_OBJECTIVE_C)
+        ReMake_SetupObjectiveC(${coreTargetName})
+    endif()
 
     set(targetName ${coreTargetName})
 
