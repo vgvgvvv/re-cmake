@@ -2,7 +2,16 @@
 message(STATUS "include Platform.cmake")
 
 if(NOT RE_TARGET_PLATFORM)
-	set(RE_TARGET_PLATFORM "Windows")
+	IF (WIN32)
+		MESSAGE(STATUS "Current System WIN32")
+		set(RE_TARGET_PLATFORM "Windows")
+	ELSEIF (APPLE)
+		MESSAGE(STATUS "Current System Apple")
+		set(RE_TARGET_PLATFORM "MacOS")
+	ELSEIF (UNIX)
+		MESSAGE(STATUS "Current System Unix")
+		set(RE_TARGET_PLATFORM "Linux")
+	ENDIF ()
 endif()
 
 if(${RE_TARGET_PLATFORM} STREQUAL "Windows")
