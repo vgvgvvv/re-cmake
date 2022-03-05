@@ -13,6 +13,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
 
 set(REMAKE_ROOT ${CMAKE_CURRENT_LIST_DIR})
+set(REMAKE_TEMP_ROOT ${REMAKE_ROOT}/Temp)
 message(STATUS "REMAKE Lib ROOT : ${REMAKE_ROOT}")
 
 macro(ReMake_InitProject)
@@ -96,4 +97,11 @@ endmacro()
 macro(ReMake_UseConan)
 	set(USE_CONAN true)
 	include(${REMAKE_ROOT}/conan.cmake)
+endmacro()
+
+# invoke before project
+macro(ReMake_UseCPM)
+	set(USE_CPM true)
+	add_definitions(-DCPM_SOURCE_CACHE=${REMAKE_TEMP_ROOT}/CMP/deps)
+	include(${REMAKE_ROOT}/CPM/CPM.cmake)
 endmacro()
