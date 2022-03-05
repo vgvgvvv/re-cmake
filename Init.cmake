@@ -11,6 +11,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/ObjectiveC.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/conan.cmake")
 
 
 macro(ReMake_InitProject)
