@@ -9,7 +9,7 @@ macro(ReMake_InitGit)
   message(STATUS "GIT_VERSION_STRING: ${GIT_VERSION_STRING}")
 endmacro()
 
-function(ReMake_UpdateSubModule)
+function(ReMake_UpdateSubModule WorkSpaceDir)
   if(NOT GIT_FOUND)
     message(FATAL_ERROR "you should call InitGit() before calling UpdateSubModule()")
   endif()
@@ -18,13 +18,13 @@ function(ReMake_UpdateSubModule)
     #OUTPUT_VARIABLE out
     #OUTPUT_STRIP_TRAILING_WHITESPACE
     #ERROR_QUIET
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    WORKING_DIRECTORY ${WorkSpaceDir}
   )
   execute_process(
     COMMAND ${GIT_EXECUTABLE} submodule update
     #OUTPUT_VARIABLE out
     #OUTPUT_STRIP_TRAILING_WHITESPACE
     #ERROR_QUIET
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    WORKING_DIRECTORY ${WorkSpaceDir}
   )
 endfunction()

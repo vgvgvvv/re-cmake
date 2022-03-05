@@ -75,3 +75,7 @@ macro(ReMake_InitProject)
 		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO})
 	endif()
 endmacro()
+
+macro(ReMake_SetToolChainFile ToolChainFilePath)
+set(CMAKE_TOOLCHAIN_FILE ${ToolChainFilePath})
+endmacro()
