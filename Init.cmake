@@ -11,8 +11,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/ObjectiveC.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/vcpkg.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/conan.cmake")
 
 set(REMAKE_ROOT ${CMAKE_CURRENT_LIST_DIR})
 message(STATUS "REMAKE Lib ROOT : ${REMAKE_ROOT}")
@@ -86,11 +84,16 @@ endmacro()
 
 # invoke before project
 macro(ReMake_UseVcpkg VcpkgPath)
+	message(STATUS "Use Vcpkg at ${VcpkgPath}")
 	set(USE_VCPKG true)
-	set(CMAKE_TOOLCHAIN_FILE "${VcpkgPath}/scripts/buildsystems/vcpkg.cmake" PARENT_SCOPE)
+	set(VCPKG_ROOT ${VcpkgPath})
+	set(VCPKG_CMD ${VcpkgPath}/vcpkg.exe)
+	set(CMAKE_TOOLCHAIN_FILE "${VcpkgPath}/scripts/buildsystems/vcpkg.cmake")
+	include(${REMAKE_ROOT}/vcpkg.cmake)
 endmacro()
 
 # invoke before project
-macro(ReMake_UseVcpkg VcpkgPath)
+macro(ReMake_UseConan)
 	set(USE_CONAN true)
+	include(${REMAKE_ROOT}/conan.cmake)
 endmacro()
