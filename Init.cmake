@@ -11,7 +11,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/ObjectiveC.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/conan.cmake")
 
 
 macro(ReMake_InitProject)
@@ -76,6 +75,18 @@ macro(ReMake_InitProject)
 	endif()
 endmacro()
 
+# invoke before project
 macro(ReMake_SetToolChainFile ToolChainFilePath)
-set(CMAKE_TOOLCHAIN_FILE ${ToolChainFilePath})
+	set(CMAKE_TOOLCHAIN_FILE ${ToolChainFilePath})
 endmacro()
+
+# invoke before project
+macro(ReMake_UseVcpkg VcpkgPath)
+	ReMake_SetToolChainFile("${VcpkgPath}/scripts/buildsystems/vcpkg.cmake")
+	include("${CMAKE_CURRENT_LIST_DIR}/vcpkg.cmake")
+endmacro()
+
+#invoke brefore project
+macro(ReMake_UseConan)
+	include("${CMAKE_CURRENT_LIST_DIR}/conan.cmake")
+endmacro(ReMake_UseConan)
