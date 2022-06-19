@@ -121,6 +121,6 @@ macro(ReMake_UseCPM)
 				${CPM_DOWNLOAD_LOCATION}
 				)
 	endif()
-
+	message(STATUS "Use CPM at ${CPM_DOWNLOAD_LOCATION}")
 	include(${CPM_DOWNLOAD_LOCATION})
 endmacro()
