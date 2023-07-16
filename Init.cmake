@@ -100,27 +100,37 @@ macro(ReMake_UseConan)
 	include(${REMAKE_ROOT}/conan.cmake)
 endmacro()
 
+set(CPM_INTERNAL_LOCATION ${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
 # invoke before project
-macro(ReMake_UseCPM)
+function(ReMake_UseCPM)
 	set(USE_CPM true)
-	add_definitions(-DCPM_SOURCE_CACHE=${REMAKE_TEMP_ROOT}/CMP/deps)
 
-	set(CPM_DOWNLOAD_VERSION 0.35.1)
-	if(CPM_SOURCE_CACHE)
-		set(CPM_DOWNLOAD_LOCATION "${CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-	elseif(DEFINED ENV{CPM_SOURCE_CACHE})
-		set(CPM_DOWNLOAD_LOCATION "$ENV{CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+	message(STATUS "cpm internal location ${CPM_INTERNAL_LOCATION}")
+
+	if(EXISTS ${CPM_INTERNAL_LOCATION})
+		message(STATUS "Use CPM at ${CPM_INTERNAL_LOCATION}")
+		include(${CPM_INTERNAL_LOCATION})
 	else()
-		set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-	endif()
 
-	if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-		message(STATUS "Downloading CPM.cmake to ${CPM_DOWNLOAD_LOCATION}")
-		file(DOWNLOAD
-				https://github.com/cpm-cmake/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake
-				${CPM_DOWNLOAD_LOCATION}
-				)
+		add_definitions(-DCPM_SOURCE_CACHE=${REMAKE_TEMP_ROOT}/CMP/deps)
+
+		set(CPM_DOWNLOAD_VERSION 0.35.1)
+		if(CPM_SOURCE_CACHE)
+			set(CPM_DOWNLOAD_LOCATION "${CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+		elseif(DEFINED ENV{CPM_SOURCE_CACHE})
+			set(CPM_DOWNLOAD_LOCATION "$ENV{CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+		else()
+			set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+		endif()
+
+		if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
+			message(STATUS "Downloading CPM.cmake to ${CPM_DOWNLOAD_LOCATION}")
+			file(DOWNLOAD
+					https://github.com/cpm-cmake/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake
+					${CPM_DOWNLOAD_LOCATION}
+					)
+		endif()
+		message(STATUS "Use CPM at ${CPM_DOWNLOAD_LOCATION}")
+		include(${CPM_DOWNLOAD_LOCATION})
 	endif()
-	message(STATUS "Use CPM at ${CPM_DOWNLOAD_LOCATION}")
-	include(${CPM_DOWNLOAD_LOCATION})
-endmacro()
+endfunction()
