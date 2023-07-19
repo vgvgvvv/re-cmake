@@ -94,6 +94,10 @@ function(ReMake_ExpandSources rst sources)
     set(${rst} ${tmp_rst} PARENT_SCOPE)
 endfunction()
 
+function(ReMake_InitDefaultTargetSetting TargetName)
+    string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+    target_compile_definitions(${TargetName} PUBLIC -D${UPPER_CMAKE_BUILD_TYPE}_BUILD=1)
+endfunction()
 
 # [option]
 # TEST
@@ -408,6 +412,8 @@ function(ReMake_AddTarget)
       INTERFACE ${ARG_PCH_INTERFACE}
       PRIVATE ${ARG_PCH}
     )
+
+    ReMake_InitDefaultTargetSetting(${targetName})
 
     message(STATUS "----------")
 
