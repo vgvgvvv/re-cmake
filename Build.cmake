@@ -28,10 +28,14 @@ function(ReMake_AddSubDirsRec path)
     list(APPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${path}")
     foreach(item ${children})
         if(IS_DIRECTORY ${item} AND EXISTS "${item}/CMakeLists.txt")
+            set(isGoodForPlatform 0)
+            ReMake_IsValidPlatformFileOrDir(${item} isGoodForPlatform)
             set(isVendor -1)
             string(FIND ${item} "vendor" isVendor)
             if(${isVendor} GREATER -1)
                 message(STATUS "ignore vendor ${item}")
+            elseif(${isGoodForPlatform} EQUAL 0)
+                message(STATUS "ignore non current platform directory ${item}")
             else()
                 # 加入子文件夹的同时 添加include文件夹
                 include_directories(${item})
@@ -39,8 +43,9 @@ function(ReMake_AddSubDirsRec path)
             endif()
         endif()
     endforeach()
+
     foreach(dir ${dirs})
-    add_subdirectory(${dir})
+        add_subdirectory(${dir})
     endforeach()
 endfunction()
 
@@ -54,26 +59,28 @@ endfunction()
 # 获取源文件
 function(ReMake_ExpandSources rst sources)
 
+    set(finalFiles "")
     set(tmp_rst "")
     foreach(item ${${sources}})
         if(IS_DIRECTORY ${item})
-            file(GLOB_RECURSE itemSrcs
-                # cmake
-                ${item}/*.cmake
 
-                # INTERFACEer files
-                ${item}/*.h
-                ${item}/*.hpp
-                ${item}/*.hxx
-                ${item}/*.inl
-        
-                # source files
-                ${item}/*.c
-        
-                ${item}/*.cc
-                ${item}/*.cpp
-                ${item}/*.cxx
-            )
+            file(GLOB_RECURSE itemSrcs
+                    # cmake
+                    ${item}/*.cmake
+
+                    # INTERFACEer files
+                    ${item}/*.h
+                    ${item}/*.hpp
+                    ${item}/*.hxx
+                    ${item}/*.inl
+
+                    # source files
+                    ${item}/*.c
+
+                    ${item}/*.cc
+                    ${item}/*.cpp
+                    ${item}/*.cxx
+                    )
             list(APPEND tmp_rst ${itemSrcs})
             if(USE_OBJECTIVE_C EQUAL 1)
                 file(GLOB_RECURSE OCItemSrcs
@@ -84,14 +91,33 @@ function(ReMake_ExpandSources rst sources)
                         )
                 list(APPEND tmp_rst ${OCItemSrcs})
             endif()
+
+            foreach (file ${tmp_rst})
+                set(isGood 0)
+                ReMake_IsValidPlatformFileOrDir(${file} isGood)
+                if(isGood EQUAL 1)
+                    list(APPEND finalFiles ${file})
+                else()
+                    message(STATUS "remove non current platform file : ${file}")
+                endif ()
+            endforeach ()
+#            foreach (finalFile ${finalFiles})
+#                message(STATUS "finalFile : ${finalFile}")
+#            endforeach ()
         else()
             if(NOT IS_ABSOLUTE "${item}")
                 get_filename_component(item "${item}" ABSOLUTE)
             endif()
-            list(CMAKE_<LANG>_ARCHIVE_APPEND tmp_rst ${item})
+            set(isGood 0)
+            ReMake_IsValidPlatformFileOrDir(${file} isGood)
+            if(isGood EQUAL 1)
+                list(CMAKE_<LANG>_ARCHIVE_APPEND finalFiles ${item})
+            else()
+                message(STATUS "remove non current platform file : ${item}")
+            endif()
         endif()
     endforeach()
-    set(${rst} ${tmp_rst} PARENT_SCOPE)
+    set(${rst} ${finalFiles} PARENT_SCOPE)
 endfunction()
 
 function(ReMake_InitDefaultTargetSetting TargetName)
