@@ -25,6 +25,9 @@ macro(ReMake_InitProject)
 	set(CMAKE_CXX_STANDARD 23)
 	set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+	message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
+
 	if(NOT CMAKE_BUILD_TYPE)
 		message(NOTICE "No default CMAKE_BUILD_TYPE, so UCMake set it to \"Debug\"")
 		set(CMAKE_BUILD_TYPE Debug CACHE STRING
