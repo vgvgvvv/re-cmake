@@ -1,5 +1,5 @@
 
-message(STATUS "include Basic.cmake")
+message(STATUS "[Global] include Basic.cmake")
 
 macro(ReMake_Include FileName)
   ReMake_DefaultLog("include ${FileName}")

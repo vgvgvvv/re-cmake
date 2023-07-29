@@ -1,5 +1,5 @@
 
-message(STATUS "inlcude init.cmake")
+message(STATUS "[Global] include init.cmake")
 
 # 包含所有cmake
 include (GenerateExportHeader)
@@ -28,7 +28,7 @@ macro(ReMake_InitProject)
 		set(REMAKE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 	endif()
 
-	ReMake_Log(ReMake_GlobalTargetName "start init project root is ${REMAKE_ROOT_PATH}")
+	ReMake_DefaultLog("start init project root is ${REMAKE_ROOT_PATH}")
 
 	set(CMAKE_DEBUG_POSTFIX "")
 	set(CMAKE_RELEASE_POSTFIX "")
