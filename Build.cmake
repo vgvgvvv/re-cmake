@@ -147,8 +147,6 @@ endfunction()
 # PCH: precompile headers                            | target_precompile_headers
 function(ReMake_AddTarget)
 
-    ReMake_DefaultLog("----------")
-    ReMake_DefaultLog("Add Target")
     set(arglist "")
     # public
     list(APPEND arglist 
@@ -255,6 +253,9 @@ function(ReMake_AddTarget)
         set(coreTargetName ${ARG_TARGET_NAME})
     endif()
 
+    ReMake_Log(${coreTargetName} "----------")
+    ReMake_Log(${coreTargetName} "Add Target")
+
     
     if(NOT "${ARG_RETURN_TARGET_NAME}" STREQUAL "")
         set(${ARG_RETURN_TARGET_NAME} ${coreTargetName} PARENT_SCOPE)
@@ -263,73 +264,93 @@ function(ReMake_AddTarget)
     
 
     # print
-    ReMake_DefaultLog("- name: ${coreTargetName}")
-    ReMake_DefaultLog("- folder : ${targetFolder}")
-    ReMake_DefaultLog("- mode: ${ARG_MODE}")
+    ReMake_Log(${coreTargetName} "- name: ${coreTargetName}")
+    ReMake_Log(${coreTargetName} "- folder : ${targetFolder}")
+    ReMake_Log(${coreTargetName} "- mode: ${ARG_MODE}")
 
     REMAKE_LIST_PRINT(STRS ${sources_private}
     TITLE  "- sources (private):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${sources_interface}
     TITLE  "- sources interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${sources_public}
     TITLE  "- sources public:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_LIB}
     TITLE  "- lib (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_LIB_INTERFACE}
     TITLE  "- lib interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_LIB_PRIVATE}
     TITLE  "- lib private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_INC}
     TITLE  "- inc (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_INC_INTERFACE}
     TITLE  "- inc interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_INC_PRIVATE}
     TITLE  "- inc private:"
     PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_C_OPTION}
     TITLE  "- compile option (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_C_OPTION_INTERFACE}
     TITLE  "- compile option interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_C_OPTION_PRIVATE}
     TITLE  "- compile option private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_L_OPTION}
     TITLE  "- link option (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_L_OPTION_INTERFACE}
     TITLE  "- link option interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
     ReMake_List_Print(STRS ${ARG_L_OPTION_PRIVATE}
     TITLE  "- link option private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${coreTargetName})
 
     if("${ARG_MODE}" STREQUAL "EXE")
         add_executable(${coreTargetName})
@@ -366,7 +387,7 @@ function(ReMake_AddTarget)
 
     if(NOT "${ARG_CXX_STANDARD}" STREQUAL "")
       set_property(TARGET ${targetName} PROPERTY CXX_STANDARD ${ARG_CXX_STANDARD})
-      ReMake_DefaultLog("- CXX_STANDARD : ${ARG_CXX_STANDARD}")
+      ReMake_Log(${coreTargetName} "- CXX_STANDARD : ${ARG_CXX_STANDARD}")
     endif()
 
     # folder
@@ -439,9 +460,9 @@ function(ReMake_AddTarget)
 
     ReMake_InitDefaultTargetSetting(${targetName})
 
-    ReMake_DefaultLog("----------")
+    ReMake_Log(${coreTargetName} "----------")
 
-    ReMake_DefaultLog("generate module info...")
+    ReMake_Log(${coreTargetName} "generate module info...")
 
     string(APPEND TargetArgs "{\n")
     string(APPEND TargetArgs "  \"targetName\" : \"${targetName}\",\n" )
