@@ -17,6 +17,19 @@ set(REMAKE_TEMP_ROOT ${REMAKE_ROOT}/Temp)
 message(STATUS "REMAKE Lib ROOT : ${REMAKE_ROOT}")
 
 macro(ReMake_InitProject)
+
+	if(NOT REMAKE_INITED)
+		set(REMAKE_INITED 1)
+	else()
+		return()
+	endif()
+
+	if(NOT REMAKE_ROOT_PATH)
+		set(REMAKE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+	endif()
+
+	message(STATUS "start init project root is ${REMAKE_ROOT_PATH}")
+
 	set(CMAKE_DEBUG_POSTFIX "")
 	set(CMAKE_RELEASE_POSTFIX "")
 	set(CMAKE_MINSIZEREL_POSTFIX "")
@@ -36,11 +49,6 @@ macro(ReMake_InitProject)
 			"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 	endif()
 
-	if(NOT REMAKE_ROOT_PATH)
-		set(REMAKE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-	endif()
-
-	
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${REMAKE_ROOT_PATH}/binary/${RE_TARGET_PLATFORM}/debug/bin")
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${REMAKE_ROOT_PATH}/binary/${RE_TARGET_PLATFORM}/release/bin")
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${REMAKE_ROOT_PATH}/binary/${RE_TARGET_PLATFORM}/minsizerel/bin")

@@ -33,7 +33,25 @@ function(ReMake_Path_Back rst path times)
   set(${rst} ${curPath} PARENT_SCOPE)
 endfunction()
 
+set(ReMake_GlobalTargetName "GLOBAL")
+
 function(ReMake_ShowIncludeFileName)
     get_filename_component(file_name ${CMAKE_CURRENT_LIST_FILE} NAME)
     message(STATUS "include ${file_name}")
+endfunction()
+
+function(ReMake_Log TargetName Msg)
+  message(STATUS "[${TargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_Warn TargetName Msg)
+  message(WARNING "[${TargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_Error TargetName Msg)
+  message(SEND_ERROR "[${TargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_FatalError TargetName Msg)
+  message(FATAL_ERROR "[${TargetName}] ${Msg}")
 endfunction()
