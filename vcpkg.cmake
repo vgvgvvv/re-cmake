@@ -22,15 +22,15 @@ macro(ReMake_VCPkg_FindPackage PackageName DownloadName)
     find_package(${PackageName} CONFIG)
 
     if(NOT ${PackageName}_FOUND)
-        message(WARNING "${PackageName} -> ${DownloadName} Not Found Need Download")
+        ReMake_DefaultWarn("${PackageName} -> ${DownloadName} Not Found Need Download")
         set(ArchType)
         ReMake_VCPkg_GetArch(ArchType)
-        message(STATUS "Start Download ${DownloadName}:${ArchType}")
+        ReMake_DefaultLog("Start Download ${DownloadName}:${ArchType}")
         execute_process(COMMAND ${VCPKG_CMD} install ${DownloadName}:${ArchType}
                 WORKING_DIRECTORY ${VCPKG_ROOT})
         find_package(${PackageName} CONFIG REQUIRED)
     else()
-        message(STATUS "${PackageName} -> ${DownloadName} Found")
+        ReMake_DefaultLog("${PackageName} -> ${DownloadName} Found")
     endif()
 
 endmacro()

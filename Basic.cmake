@@ -1,6 +1,11 @@
 
 message(STATUS "include Basic.cmake")
 
+macro(ReMake_Include FileName)
+  ReMake_DefaultLog("include ${FileName}")
+  include(${FileName})
+endmacro()
+
 # 输出列表
 function(ReMake_List_Print)
   cmake_parse_arguments("ARG" "" "TITLE;PREFIX" "STRS" ${ARGN})
@@ -9,10 +14,10 @@ function(ReMake_List_Print)
     return()
   endif()
   if(NOT ${ARG_TITLE} STREQUAL "")
-    message(STATUS ${ARG_TITLE})
+    ReMake_DefaultLog(${ARG_TITLE})
   endif()
   foreach(str ${ARG_STRS})
-    message(STATUS "${ARG_PREFIX}${str}")
+    ReMake_DefaultLog("${ARG_PREFIX}${str}")
   endforeach()
 endfunction()
 
@@ -37,7 +42,7 @@ set(ReMake_GlobalTargetName "GLOBAL")
 
 function(ReMake_ShowIncludeFileName)
     get_filename_component(file_name ${CMAKE_CURRENT_LIST_FILE} NAME)
-    message(STATUS "include ${file_name}")
+    ReMake_Log(ReMake_GlobalTargetName "include ${file_name}")
 endfunction()
 
 function(ReMake_Log TargetName Msg)
@@ -54,4 +59,20 @@ endfunction()
 
 function(ReMake_FatalError TargetName Msg)
   message(FATAL_ERROR "[${TargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_DefaultLog Msg)
+  message(STATUS "[${ReMake_GlobalTargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_DefaultWarn Msg)
+  message(WARNING "[${ReMake_GlobalTargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_DefaultError Msg)
+  message(SEND_ERROR "[${ReMake_GlobalTargetName}] ${Msg}")
+endfunction()
+
+function(ReMake_DefaultFatalError Msg)
+  message(FATAL_ERROR "[${ReMake_GlobalTargetName}] ${Msg}")
 endfunction()

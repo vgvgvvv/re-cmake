@@ -1,6 +1,4 @@
 
-ReMake_ShowIncludeFileName()
-
 # 是否为根工程
 function(IsRootProject Result)
     if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -17,9 +15,9 @@ function(ReMake_AddSubDirsRec path)
     IsRootProject(IsRoot)
 
     if(${IsRoot})
-	    message(STATUS "IsRoot Project Add Sub Directories")
+        ReMake_DefaultLog("IsRoot Project Add Sub Directories")
     else()
-	    message(STATUS "Not Root Project Skip Add Sub Directories")
+        ReMake_DefaultLog("Not Root Project Skip Add Sub Directories")
         return()
     endif()
 
@@ -33,9 +31,9 @@ function(ReMake_AddSubDirsRec path)
             set(isVendor -1)
             string(FIND ${item} "vendor" isVendor)
             if(${isVendor} GREATER -1)
-                message(STATUS "ignore vendor ${item}")
+                ReMake_DefaultLog("ignore vendor ${item}")
             elseif(${isGoodForPlatform} EQUAL 0)
-                message(STATUS "ignore non current platform directory ${item}")
+                ReMake_DefaultLog("ignore non current platform directory ${item}")
             else()
                 # 加入子文件夹的同时 添加include文件夹
                 include_directories(${item})
@@ -98,7 +96,7 @@ function(ReMake_ExpandSources rst sources)
                 if(isGood EQUAL 1)
                     list(APPEND finalFiles ${file})
                 else()
-                    message(STATUS "remove non current platform file : ${file}")
+                    ReMake_DefaultLog("remove non current platform file : ${file}")
                 endif ()
             endforeach ()
 #            foreach (finalFile ${finalFiles})
@@ -113,7 +111,7 @@ function(ReMake_ExpandSources rst sources)
             if(isGood EQUAL 1)
                 list(CMAKE_<LANG>_ARCHIVE_APPEND finalFiles ${item})
             else()
-                message(STATUS "remove non current platform file : ${item}")
+                ReMake_DefaultLog("remove non current platform file : ${item}")
             endif()
         endif()
     endforeach()
@@ -149,8 +147,8 @@ endfunction()
 # PCH: precompile headers                            | target_precompile_headers
 function(ReMake_AddTarget)
 
-    message(STATUS "----------")
-    message(STATUS "Add Target")
+    ReMake_DefaultLog("----------")
+    ReMake_DefaultLog("Add Target")
     set(arglist "")
     # public
     list(APPEND arglist 
@@ -238,7 +236,7 @@ function(ReMake_AddTarget)
     elseif("${ARG_ADD_CURRENT_TO}" STREQUAL "PRIVATE")
         list(APPEND ARG_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
     elseif(NOT "${ARG_ADD_CURRENT_TO}" STREQUAL "NONE")
-        message(FATAL_ERROR "ADD_CURRENT_TO [${ARG_ADD_CURRENT_TO}] is not supported")
+        ReMake_DefaultFatalError("ADD_CURRENT_TO [${ARG_ADD_CURRENT_TO}] is not supported")
     endif()
 
     ReMake_ExpandSources(sources_public ARG_SOURCE_PUBLIC)
@@ -265,9 +263,9 @@ function(ReMake_AddTarget)
     
 
     # print
-    message(STATUS "- name: ${coreTargetName}")
-    message(STATUS "- folder : ${targetFolder}")
-    message(STATUS "- mode: ${ARG_MODE}")
+    ReMake_DefaultLog("- name: ${coreTargetName}")
+    ReMake_DefaultLog("- folder : ${targetFolder}")
+    ReMake_DefaultLog("- mode: ${ARG_MODE}")
 
     REMAKE_LIST_PRINT(STRS ${sources_private}
     TITLE  "- sources (private):"
@@ -356,7 +354,7 @@ function(ReMake_AddTarget)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
         add_library(${coreTargetName} INTERFACE)
     else()
-        message(FATAL_ERROR "mode [${ARG_MODE}] is not supported")
+        ReMake_DefaultFatalError("mode [${ARG_MODE}] is not supported")
         return()
     endif()
 
@@ -368,7 +366,7 @@ function(ReMake_AddTarget)
 
     if(NOT "${ARG_CXX_STANDARD}" STREQUAL "")
       set_property(TARGET ${targetName} PROPERTY CXX_STANDARD ${ARG_CXX_STANDARD})
-      message(STATUS "- CXX_STANDARD : ${ARG_CXX_STANDARD}")
+      ReMake_DefaultLog("- CXX_STANDARD : ${ARG_CXX_STANDARD}")
     endif()
 
     # folder
@@ -441,9 +439,9 @@ function(ReMake_AddTarget)
 
     ReMake_InitDefaultTargetSetting(${targetName})
 
-    message(STATUS "----------")
+    ReMake_DefaultLog("----------")
 
-    message(STATUS "generate module info...")
+    ReMake_DefaultLog("generate module info...")
 
     string(APPEND TargetArgs "{\n")
     string(APPEND TargetArgs "  \"targetName\" : \"${targetName}\",\n" )
@@ -520,5 +518,5 @@ function(ReMake_AddTarget)
 
     write_file(${CMAKE_CURRENT_SOURCE_DIR}/${targetName}.Target.json ${TargetArgs})
 
-    message(STATUS "----------")
+    ReMake_DefaultLog("----------")
 endfunction()

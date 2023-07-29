@@ -3,18 +3,18 @@ message(STATUS "inlcude init.cmake")
 
 # 包含所有cmake
 include (GenerateExportHeader)
-
 include("${CMAKE_CURRENT_LIST_DIR}/Basic.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/Tools.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/Git.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/ObjectiveC.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
+
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/Tools.cmake")
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/Git.cmake")
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/ObjectiveC.cmake")
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/Build.cmake")
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/Json.cmake")
+ReMake_Include("${CMAKE_CURRENT_LIST_DIR}/platform/Platform.cmake")
 
 set(REMAKE_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(REMAKE_TEMP_ROOT ${REMAKE_ROOT}/Temp)
-message(STATUS "REMAKE Lib ROOT : ${REMAKE_ROOT}")
+ReMake_DefaultLog("REMAKE Lib ROOT : ${REMAKE_ROOT}")
 
 macro(ReMake_InitProject)
 
@@ -28,7 +28,7 @@ macro(ReMake_InitProject)
 		set(REMAKE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 	endif()
 
-	message(STATUS "start init project root is ${REMAKE_ROOT_PATH}")
+	ReMake_Log(ReMake_GlobalTargetName "start init project root is ${REMAKE_ROOT_PATH}")
 
 	set(CMAKE_DEBUG_POSTFIX "")
 	set(CMAKE_RELEASE_POSTFIX "")
@@ -41,10 +41,10 @@ macro(ReMake_InitProject)
 	if(IS_WINDOWS EQUAL 1)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 	endif()
-	message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
+	ReMake_DefaultLog("CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
 	if(NOT CMAKE_BUILD_TYPE)
-		message(NOTICE "No default CMAKE_BUILD_TYPE, so UCMake set it to \"Debug\"")
+		ReMake_DefaultLog("No default CMAKE_BUILD_TYPE, so UCMake set it to \"Debug\"")
 		set(CMAKE_BUILD_TYPE Debug CACHE STRING
 			"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 	endif()
@@ -98,19 +98,19 @@ endmacro()
 
 # invoke before project
 macro(ReMake_UseVcpkg VcpkgPath)
-	message(STATUS "Use Vcpkg at ${VcpkgPath}")
+	ReMake_DefaultLog("Use Vcpkg at ${VcpkgPath}")
 	set(USE_VCPKG true)
 	set(VCPKG_ROOT ${VcpkgPath})
 	set(VCPKG_CMD ${VcpkgPath}/vcpkg.exe)
 	set(CMAKE_TOOLCHAIN_FILE "${VcpkgPath}/scripts/buildsystems/vcpkg.cmake")
-	include(${REMAKE_ROOT}/vcpkg.cmake)
+	ReMake_Include(${REMAKE_ROOT}/vcpkg.cmake)
 endmacro()
 
 # invoke before project
 macro(ReMake_UseConan)
-	message(STATUS "Use Conan at ${REMAKE_ROOT}/conan.cmake")
+	ReMake_DefaultLog("Use Conan at ${REMAKE_ROOT}/conan.cmake")
 	set(USE_CONAN true)
-	include(${REMAKE_ROOT}/conan.cmake)
+	ReMake_Include(${REMAKE_ROOT}/conan.cmake)
 endmacro()
 
 set(CPM_INTERNAL_LOCATION ${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
@@ -118,11 +118,11 @@ set(CPM_INTERNAL_LOCATION ${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
 function(ReMake_UseCPM)
 	set(USE_CPM true)
 
-	message(STATUS "cpm internal location ${CPM_INTERNAL_LOCATION}")
+	ReMake_DefaultLog("cpm internal location ${CPM_INTERNAL_LOCATION}")
 
 	if(EXISTS ${CPM_INTERNAL_LOCATION})
-		message(STATUS "Use CPM at ${CPM_INTERNAL_LOCATION}")
-		include(${CPM_INTERNAL_LOCATION})
+		ReMake_DefaultLog("Use CPM at ${CPM_INTERNAL_LOCATION}")
+		ReMake_Include(${CPM_INTERNAL_LOCATION})
 	else()
 
 		add_definitions(-DCPM_SOURCE_CACHE=${REMAKE_TEMP_ROOT}/CMP/deps)
@@ -137,13 +137,13 @@ function(ReMake_UseCPM)
 		endif()
 
 		if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-			message(STATUS "Downloading CPM.cmake to ${CPM_DOWNLOAD_LOCATION}")
+			ReMake_DefaultLog("Downloading CPM.cmake to ${CPM_DOWNLOAD_LOCATION}")
 			file(DOWNLOAD
 					https://github.com/cpm-cmake/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake
 					${CPM_DOWNLOAD_LOCATION}
 					)
 		endif()
-		message(STATUS "Use CPM at ${CPM_DOWNLOAD_LOCATION}")
-		include(${CPM_DOWNLOAD_LOCATION})
+		ReMake_DefaultLog("Use CPM at ${CPM_DOWNLOAD_LOCATION}")
+		ReMake_Include(${CPM_DOWNLOAD_LOCATION})
 	endif()
 endfunction()

@@ -1,6 +1,4 @@
 
-ReMake_ShowIncludeFileName()
-
 function(Json_ListToJsonString InputList OutString)
 
 	set(StrList "")

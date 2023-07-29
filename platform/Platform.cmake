@@ -1,15 +1,15 @@
 
-message(STATUS "include Platform.cmake")
+ReMake_DefaultLog("include Platform.cmake")
 
 if(NOT RE_TARGET_PLATFORM)
 	IF (WIN32)
-		MESSAGE(STATUS "Current System WIN32")
+		ReMake_DefaultLog("Current System WIN32")
 		set(RE_TARGET_PLATFORM "Windows")
 	ELSEIF (APPLE)
-		MESSAGE(STATUS "Current System Apple")
+		ReMake_DefaultLog("Current System Apple")
 		set(RE_TARGET_PLATFORM "MacOS")
 	ELSEIF (UNIX)
-		MESSAGE(STATUS "Current System Unix")
+		ReMake_DefaultLog("Current System Unix")
 		set(RE_TARGET_PLATFORM "Linux")
 	ENDIF ()
 endif()
@@ -58,12 +58,12 @@ ReMake_InitPlatform(
 		PLATFORM_CMAKE_FILE
 )
 
-message(STATUS "IS_WINDOWS=${IS_WINDOWS}")
-message(STATUS "IS_MACOS=${IS_MACOS}")
-message(STATUS "IS_LINUX=${IS_LINUX}")
-message(STATUS "IS_IOS=${IS_IOS}")
-message(STATUS "IS_ANDROID=${IS_ANDROID}")
-message(STATUS "PLATFORM_CMAKE_FILE=${PLATFORM_CMAKE_FILE}")
+ReMake_DefaultLog("IS_WINDOWS=${IS_WINDOWS}")
+ReMake_DefaultLog("IS_MACOS=${IS_MACOS}")
+ReMake_DefaultLog("IS_LINUX=${IS_LINUX}")
+ReMake_DefaultLog("IS_IOS=${IS_IOS}")
+ReMake_DefaultLog("IS_ANDROID=${IS_ANDROID}")
+ReMake_DefaultLog("PLATFORM_CMAKE_FILE=${PLATFORM_CMAKE_FILE}")
 
 include(${PLATFORM_CMAKE_FILE})
 
@@ -100,7 +100,7 @@ function(ReMake_InitCompiler
 		set(${COMPILED_BY_MSVC} 1 PARENT_SCOPE)
 		set(${RETURN_INCLUDE_FILE} "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/Compiler/MSVC.cmake" PARENT_SCOPE)
 	else ()
-		message(FATAL_ERROR "unknown compiler !! ${CMAKE_CXX_COMPILER_ID}")
+		ReMake_DefaultFatalError("unknown compiler !! ${CMAKE_CXX_COMPILER_ID}")
 	endif()
 endfunction()
 
@@ -112,11 +112,11 @@ ReMake_InitCompiler(
 		COMPILED_CMAKE_FILE)
 
 
-message(STATUS "CPP_COMPILED_BY_CLANG=${CPP_COMPILED_BY_CLANG}")
-message(STATUS "CPP_COMPILED_BY_GUN=${CPP_COMPILED_BY_GUN}")
-message(STATUS "CPP_COMPILED_BY_INTEL=${CPP_COMPILED_BY_INTEL}")
-message(STATUS "CPP_COMPILED_BY_MSVC=${CPP_COMPILED_BY_MSVC}")
-message(STATUS "COMPILED_CMAKE_FILE=${COMPILED_CMAKE_FILE}")
+ReMake_DefaultLog("CPP_COMPILED_BY_CLANG=${CPP_COMPILED_BY_CLANG}")
+ReMake_DefaultLog("CPP_COMPILED_BY_GUN=${CPP_COMPILED_BY_GUN}")
+ReMake_DefaultLog("CPP_COMPILED_BY_INTEL=${CPP_COMPILED_BY_INTEL}")
+ReMake_DefaultLog("CPP_COMPILED_BY_MSVC=${CPP_COMPILED_BY_MSVC}")
+ReMake_DefaultLog("COMPILED_CMAKE_FILE=${COMPILED_CMAKE_FILE}")
 
 include(${COMPILED_CMAKE_FILE})
 
