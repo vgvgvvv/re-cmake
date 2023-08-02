@@ -103,6 +103,7 @@ macro(ReMake_UseVcpkg VcpkgPath)
 	set(VCPKG_ROOT ${VcpkgPath})
 	set(VCPKG_CMD ${VcpkgPath}/vcpkg.exe)
 	set(CMAKE_TOOLCHAIN_FILE "${VcpkgPath}/scripts/buildsystems/vcpkg.cmake")
+	set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${VcpkgPath}/packages")
 	ReMake_Include(${REMAKE_ROOT}/vcpkg.cmake)
 endmacro()
 

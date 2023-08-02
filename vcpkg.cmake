@@ -5,15 +5,13 @@ function(ReMake_VCPkg_GetArch Result)
     if (IS_WINDOWS EQUAL 1)
          set(${Result} "x64-windows" PARENT_SCOPE)
     elseif(IS_MACOS EQUAL 1)
-        # TODO
+        set(${Result} "x64-osx" PARENT_SCOPE)
     elseif(IS_LINUX EQUAL 1)
-        # TODO
-    elseif(IS_MACOS EQUAL 1)
-        # TODO
+        set(${Result} "x64-linux" PARENT_SCOPE)
     elseif(IS_IOS EQUAL 1)
-        # TODO
+        set(${Result} "x64-osx" PARENT_SCOPE)
     elseif(IS_ANDROID EQUAL 1)
-        # TODO
+        set(${Result} "x64-linux" PARENT_SCOPE)
     endif()
 endfunction()
 
@@ -32,5 +30,6 @@ macro(ReMake_VCPkg_FindPackage PackageName DownloadName)
     else()
         ReMake_DefaultLog("${PackageName} -> ${DownloadName} Found")
     endif()
+
 
 endmacro()
