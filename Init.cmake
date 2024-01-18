@@ -38,7 +38,7 @@ macro(ReMake_InitProject)
 	set(CMAKE_CXX_STANDARD 23)
 	set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-	if(IS_WINDOWS EQUAL 1)
+	if(COMPILED_BY_MSVC EQUAL 1)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 	endif()
 	ReMake_DefaultLog("CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
