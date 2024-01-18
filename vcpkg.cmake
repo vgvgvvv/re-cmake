@@ -17,7 +17,7 @@ endfunction()
 
 macro(ReMake_VCPkg_FindPackage PackageName DownloadName)
 
-    find_package(${PackageName} CONFIG)
+    find_package(${PackageName})
 
     if(NOT ${PackageName}_FOUND)
         ReMake_DefaultWarn("${PackageName} -> ${DownloadName} Not Found Need Download")
@@ -26,7 +26,7 @@ macro(ReMake_VCPkg_FindPackage PackageName DownloadName)
         ReMake_DefaultLog("Start Download ${DownloadName}:${ArchType}")
         execute_process(COMMAND ${VCPKG_CMD} install ${DownloadName}:${ArchType}
                 WORKING_DIRECTORY ${VCPKG_ROOT})
-        find_package(${PackageName} CONFIG REQUIRED)
+        find_package(${PackageName} REQUIRED)
     else()
         ReMake_DefaultLog("${PackageName} -> ${DownloadName} Found")
     endif()
