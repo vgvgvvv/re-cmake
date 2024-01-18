@@ -1,7 +1,7 @@
 ReMake_ShowIncludeFileName()
 
-if (CPP_COMPILED_BY_GCC EQUAL 1)
+if (CPP_COMPILED_BY_GUN EQUAL 1)
 
-    add_definitions(-DCPP_COMPILED_BY_GCC=1)
+    add_definitions(-DCOMPILED_BY_GUN=1)
 
 endif ()

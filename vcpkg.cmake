@@ -33,3 +33,22 @@ macro(ReMake_VCPkg_FindPackage PackageName DownloadName)
 
 
 endmacro()
+
+macro(ReMake_VCPkg_FindPackageWithMode PackageName DownloadName Mode)
+
+    find_package(${PackageName} ${Mode})
+
+    if(NOT ${PackageName}_FOUND)
+        ReMake_DefaultWarn("${PackageName} -> ${DownloadName} Not Found Need Download")
+        set(ArchType)
+        ReMake_VCPkg_GetArch(ArchType)
+        ReMake_DefaultLog("Start Download ${DownloadName}:${ArchType}")
+        execute_process(COMMAND ${VCPKG_CMD} install ${DownloadName}:${ArchType}
+                WORKING_DIRECTORY ${VCPKG_ROOT})
+        find_package(${PackageName} ${Mode} REQUIRED)
+    else()
+        ReMake_DefaultLog("${PackageName} -> ${DownloadName} Found")
+    endif()
+
+
+endmacro()
