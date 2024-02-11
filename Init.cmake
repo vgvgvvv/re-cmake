@@ -20,6 +20,7 @@ macro(ReMake_InitProject)
 
 	if(NOT REMAKE_INITED)
 		set(REMAKE_INITED 1)
+		add_definitions(-DUSE_REMAKE=1)
 	else()
 		return()
 	endif()
