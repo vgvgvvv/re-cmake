@@ -241,68 +241,87 @@ function(ReMake_AddTarget)
 
     REMAKE_LIST_PRINT(STRS ${sources_private}
     TITLE  "- sources (private):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${sources_interface}
     TITLE  "- sources interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${sources_public}
     TITLE  "- sources public:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_LIB}
     TITLE  "- lib (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_LIB_INTERFACE}
     TITLE  "- lib interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_LIB_PRIVATE}
     TITLE  "- lib private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_INC}
     TITLE  "- inc (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_INC_INTERFACE}
     TITLE  "- inc interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_INC_PRIVATE}
     TITLE  "- inc private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_C_OPTION}
     TITLE  "- compile option (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_C_OPTION_INTERFACE}
     TITLE  "- compile option interface:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_C_OPTION_PRIVATE}
     TITLE  "- compile option private:"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_L_OPTION}
     TITLE  "- link option (public):"
-    PREFIX "  * ")
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     ReMake_List_Print(STRS ${ARG_L_OPTION_INTERFACE}
     TITLE  "- link option interface:"
     PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_L_OPTION_PRIVATE}
     TITLE  "- link option private:"
-    PREFIX "  * ")
-
+    PREFIX "  * "
+    TAG ${ARG_TARGET_NAME})
     if("${ARG_MODE}" STREQUAL "EXE")
         add_executable(${coreTargetName})
         if(MSVC)
