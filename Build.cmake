@@ -1,4 +1,6 @@
 
+ReMake_ShowIncludeFileName()
+
 # 是否为根工程
 function(IsRootProject Result)
     if(${REMAKE_ROOT_PATH} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -15,9 +17,9 @@ function(ReMake_AddSubDirsRec path)
     IsRootProject(IsRoot)
 
     if(${IsRoot})
-        ReMake_DefaultLog("IsRoot Project Add Sub Directories")
+	    message(STATUS "IsRoot Project Add Sub Directories")
     else()
-        ReMake_DefaultLog("Not Root Project Skip Add Sub Directories")
+	    message(STATUS "Not Root Project Skip Add Sub Directories")
         return()
     endif()
 
@@ -26,14 +28,10 @@ function(ReMake_AddSubDirsRec path)
     list(APPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${path}")
     foreach(item ${children})
         if(IS_DIRECTORY ${item} AND EXISTS "${item}/CMakeLists.txt")
-            set(isGoodForPlatform 0)
-            ReMake_IsValidPlatformFileOrDir(${item} isGoodForPlatform)
             set(isVendor -1)
             string(FIND ${item} "vendor" isVendor)
             if(${isVendor} GREATER -1)
-                ReMake_DefaultLog("ignore vendor ${item}")
-            elseif(${isGoodForPlatform} EQUAL 0)
-                ReMake_DefaultLog("ignore non current platform directory ${item}")
+                message(STATUS "ignore vendor ${item}")
             else()
                 # 加入子文件夹的同时 添加include文件夹
                 include_directories(${item})
@@ -41,9 +39,8 @@ function(ReMake_AddSubDirsRec path)
             endif()
         endif()
     endforeach()
-
     foreach(dir ${dirs})
-        add_subdirectory(${dir})
+    add_subdirectory(${dir})
     endforeach()
 endfunction()
 
@@ -57,28 +54,26 @@ endfunction()
 # 获取源文件
 function(ReMake_ExpandSources rst sources)
 
-    set(finalFiles "")
     set(tmp_rst "")
     foreach(item ${${sources}})
         if(IS_DIRECTORY ${item})
-
             file(GLOB_RECURSE itemSrcs
-                    # cmake
-                    ${item}/*.cmake
+                # cmake
+                ${item}/*.cmake
 
-                    # INTERFACEer files
-                    ${item}/*.h
-                    ${item}/*.hpp
-                    ${item}/*.hxx
-                    ${item}/*.inl
+                # INTERFACEer files
+                ${item}/*.h
+                ${item}/*.hpp
+                ${item}/*.hxx
+                ${item}/*.inl
 
-                    # source files
-                    ${item}/*.c
+                # source files
+                ${item}/*.c
 
-                    ${item}/*.cc
-                    ${item}/*.cpp
-                    ${item}/*.cxx
-                    )
+                ${item}/*.cc
+                ${item}/*.cpp
+                ${item}/*.cxx
+            )
             list(APPEND tmp_rst ${itemSrcs})
             if(USE_OBJECTIVE_C EQUAL 1)
                 file(GLOB_RECURSE OCItemSrcs
@@ -89,43 +84,20 @@ function(ReMake_ExpandSources rst sources)
                         )
                 list(APPEND tmp_rst ${OCItemSrcs})
             endif()
-
-            foreach (file ${tmp_rst})
-                set(isGood 0)
-                ReMake_IsValidPlatformFileOrDir(${file} isGood)
-                if(isGood EQUAL 1)
-                    list(APPEND finalFiles ${file})
-                else()
-                    ReMake_DefaultLog("remove non current platform file : ${file}")
-                endif ()
-            endforeach ()
-#            foreach (finalFile ${finalFiles})
-#                message(STATUS "finalFile : ${finalFile}")
-#            endforeach ()
         else()
             if(NOT IS_ABSOLUTE "${item}")
                 get_filename_component(item "${item}" ABSOLUTE)
             endif()
-            set(isGood 0)
-            ReMake_IsValidPlatformFileOrDir(${file} isGood)
-            if(isGood EQUAL 1)
-                list(CMAKE_<LANG>_ARCHIVE_APPEND finalFiles ${item})
-            else()
-                ReMake_DefaultLog("remove non current platform file : ${item}")
-            endif()
+            list(CMAKE_<LANG>_ARCHIVE_APPEND tmp_rst ${item})
         endif()
     endforeach()
-    set(${rst} ${finalFiles} PARENT_SCOPE)
+    set(${rst} ${tmp_rst} PARENT_SCOPE)
 endfunction()
 
-function(ReMake_InitDefaultTargetSetting TargetName)
-    string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
-    target_compile_definitions(${TargetName} PUBLIC -D${UPPER_CMAKE_BUILD_TYPE}_BUILD=1)
-endfunction()
 
 # [option]
 # TEST
-# 
+#
 # [value]
 # 目标名
 # TARGET_NAME：
@@ -136,7 +108,7 @@ endfunction()
 # RET_TARGET_NAME
 # CXX_STANDARD: 11/14/17/20, default is global CXX_STANDARD (20)
 # PCH_REUSE_FROM
-# 
+#
 # [list] : public, interface, private
 # SOURCE: dir(recursive), file, auto add currunt dir | target_sources
 # INC: dir                                           | target_include_directories
@@ -147,36 +119,38 @@ endfunction()
 # PCH: precompile headers                            | target_precompile_headers
 function(ReMake_AddTarget)
 
+    message(STATUS "----------")
+    message(STATUS "Add Target")
     set(arglist "")
     # public
-    list(APPEND arglist 
-        SOURCE_PUBLIC 
-        INC 
-        LIB 
-        DEFINE 
-        C_OPTION 
-        L_OPTION 
+    list(APPEND arglist
+        SOURCE_PUBLIC
+        INC
+        LIB
+        DEFINE
+        C_OPTION
+        L_OPTION
         PCH_PUBLIC)
     # interface
-    list(APPEND arglist 
-        SOURCE_INTERFACE 
-        INC_INTERFACE 
-        LIB_INTERFACE 
-        DEFINE_INTERFACE 
-        C_OPTION_INTERFACE 
-        L_OPTION_INTERFACE 
+    list(APPEND arglist
+        SOURCE_INTERFACE
+        INC_INTERFACE
+        LIB_INTERFACE
+        DEFINE_INTERFACE
+        C_OPTION_INTERFACE
+        L_OPTION_INTERFACE
         PCH_INTERFACE)
     # private
-    list(APPEND arglist 
-        SOURCE 
-        INC_PRIVATE 
-        LIB_PRIVATE 
-        DEFINE_PRIVATE 
-        C_OPTION_PRIVATE 
-        L_OPTION_PRIVATE 
+    list(APPEND arglist
+        SOURCE
+        INC_PRIVATE
+        LIB_PRIVATE
+        DEFINE_PRIVATE
+        C_OPTION_PRIVATE
+        L_OPTION_PRIVATE
         PCH)
 
-     list(APPEND arglist 
+     list(APPEND arglist
         ADD_OPTIONS)
 
     cmake_parse_arguments(
@@ -234,7 +208,7 @@ function(ReMake_AddTarget)
     elseif("${ARG_ADD_CURRENT_TO}" STREQUAL "PRIVATE")
         list(APPEND ARG_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
     elseif(NOT "${ARG_ADD_CURRENT_TO}" STREQUAL "NONE")
-        ReMake_DefaultFatalError("ADD_CURRENT_TO [${ARG_ADD_CURRENT_TO}] is not supported")
+        message(FATAL_ERROR "ADD_CURRENT_TO [${ARG_ADD_CURRENT_TO}] is not supported")
     endif()
 
     ReMake_ExpandSources(sources_public ARG_SOURCE_PUBLIC)
@@ -253,104 +227,81 @@ function(ReMake_AddTarget)
         set(coreTargetName ${ARG_TARGET_NAME})
     endif()
 
-    ReMake_Log(${coreTargetName} "----------")
-    ReMake_Log(${coreTargetName} "Add Target")
 
-    
     if(NOT "${ARG_RETURN_TARGET_NAME}" STREQUAL "")
         set(${ARG_RETURN_TARGET_NAME} ${coreTargetName} PARENT_SCOPE)
     endif()
 
-    
+
 
     # print
-    ReMake_Log(${coreTargetName} "- name: ${coreTargetName}")
-    ReMake_Log(${coreTargetName} "- folder : ${targetFolder}")
-    ReMake_Log(${coreTargetName} "- mode: ${ARG_MODE}")
+    message(STATUS "- name: ${coreTargetName}")
+    message(STATUS "- folder : ${targetFolder}")
+    message(STATUS "- mode: ${ARG_MODE}")
 
     REMAKE_LIST_PRINT(STRS ${sources_private}
     TITLE  "- sources (private):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${sources_interface}
     TITLE  "- sources interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${sources_public}
     TITLE  "- sources public:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define private:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_LIB}
     TITLE  "- lib (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_LIB_INTERFACE}
     TITLE  "- lib interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_LIB_PRIVATE}
     TITLE  "- lib private:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_INC}
     TITLE  "- inc (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_INC_INTERFACE}
     TITLE  "- inc interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_INC_PRIVATE}
     TITLE  "- inc private:"
     PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE}
     TITLE  "- define (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE_INTERFACE}
     TITLE  "- define interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_DEFINE_PRIVATE}
     TITLE  "- define private:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_C_OPTION}
     TITLE  "- compile option (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_C_OPTION_INTERFACE}
     TITLE  "- compile option interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_C_OPTION_PRIVATE}
     TITLE  "- compile option private:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_L_OPTION}
     TITLE  "- link option (public):"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_L_OPTION_INTERFACE}
     TITLE  "- link option interface:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
     ReMake_List_Print(STRS ${ARG_L_OPTION_PRIVATE}
     TITLE  "- link option private:"
-    PREFIX "  * "
-    TAG ${coreTargetName})
+    PREFIX "  * ")
 
     if("${ARG_MODE}" STREQUAL "EXE")
         add_executable(${coreTargetName})
@@ -375,7 +326,7 @@ function(ReMake_AddTarget)
     elseif("${ARG_MODE}" STREQUAL "INTERFACE")
         add_library(${coreTargetName} INTERFACE)
     else()
-        ReMake_DefaultFatalError("mode [${ARG_MODE}] is not supported")
+        message(FATAL_ERROR "mode [${ARG_MODE}] is not supported")
         return()
     endif()
 
@@ -387,7 +338,7 @@ function(ReMake_AddTarget)
 
     if(NOT "${ARG_CXX_STANDARD}" STREQUAL "")
       set_property(TARGET ${targetName} PROPERTY CXX_STANDARD ${ARG_CXX_STANDARD})
-      ReMake_Log(${coreTargetName} "- CXX_STANDARD : ${ARG_CXX_STANDARD}")
+      message(STATUS "- CXX_STANDARD : ${ARG_CXX_STANDARD}")
     endif()
 
     # folder
@@ -412,15 +363,15 @@ function(ReMake_AddTarget)
 
     foreach(inc ${ARG_INC})
       get_filename_component(abs_inc ${inc} ABSOLUTE)
-      target_include_directories(${targetName} PUBLIC ${abs_inc})
+      target_include_directories(${targetName} PUBLIC ${abs_inc} ".")
     endforeach()
     foreach(inc ${ARG_INC_PRIVATE})
       get_filename_component(abs_inc ${inc} ABSOLUTE)
-      target_include_directories(${targetName} PRIVATE ${abs_inc})
+      target_include_directories(${targetName} PRIVATE ${abs_inc} ".")
     endforeach()
     foreach(inc ${ARG_INC_INTERFACE})
       get_filename_component(abs_inc ${inc} ABSOLUTE)
-      target_include_directories(${targetName} INTERFACE ${abs_inc})
+      target_include_directories(${targetName} INTERFACE ${abs_inc} ".")
     endforeach()
 
      # target define
@@ -443,14 +394,14 @@ function(ReMake_AddTarget)
       INTERFACE ${ARG_C_OPTION_INTERFACE}
       PRIVATE ${ARG_C_OPTION_PRIVATE}
     )
-    
+
     # target link option
     target_link_options(${targetName}
       PUBLIC ${ARG_L_OPTION}
       INTERFACE ${ARG_L_OPTION_INTERFACE}
       PRIVATE ${ARG_L_OPTION_PRIVATE}
     )
-    
+
     # target pch
     target_precompile_headers(${targetName}
       PUBLIC ${ARG_PCH_PUBLIC}
@@ -458,11 +409,9 @@ function(ReMake_AddTarget)
       PRIVATE ${ARG_PCH}
     )
 
-    ReMake_InitDefaultTargetSetting(${targetName})
+    message(STATUS "----------")
 
-    ReMake_Log(${coreTargetName} "----------")
-
-    ReMake_Log(${coreTargetName} "generate module info...")
+    message(STATUS "generate module info...")
 
     string(APPEND TargetArgs "{\n")
     string(APPEND TargetArgs "  \"targetName\" : \"${targetName}\",\n" )
@@ -521,7 +470,7 @@ function(ReMake_AddTarget)
     string(APPEND TargetArgs "  \"interface_lib\" : ${TempList},\n" )
     Json_ListToJsonString(ARG_LIB_PRIVATE TempList)
     string(APPEND TargetArgs "  \"private_lib\" : ${TempList},\n" )
-        
+
     string(APPEND TargetArgs "  \n" )
 
     Json_ListToJsonString(ARG_DEFINE TempList)
@@ -539,5 +488,5 @@ function(ReMake_AddTarget)
 
     write_file(${CMAKE_CURRENT_SOURCE_DIR}/${targetName}.Target.json ${TargetArgs})
 
-    ReMake_DefaultLog("----------")
+    message(STATUS "----------")
 endfunction()
